@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/avesrastogi/Chord-Player/issues"
   },
-  "homepage": "https://github.com/avesrastogi/Chord-Player#readme"
+  "homepage": "https://github.com/avesrastogi/Chord-Player#readme",
+  "dependencies": {
+    "@tonaljs/tonal": "^4.2.1"
+  }
 }
