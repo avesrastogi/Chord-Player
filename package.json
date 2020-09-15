@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/avesrastogi/Chord-Player#readme",
   "dependencies": {
+    "@tonaljs/chord": "^3.8.1",
     "@tonaljs/tonal": "^4.2.1"
   }
 }
