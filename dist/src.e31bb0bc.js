@@ -1154,449 +1154,74 @@ var index$1 = {
 };
 var _default = index$1;
 exports.default = _default;
-},{"@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js"}],"../node_modules/@tonaljs/chord-detect/dist/index.es.js":[function(require,module,exports) {
+},{"@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js"}],"../node_modules/@tonaljs/chord-dictionary/dist/index.es.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.detect = detect;
-exports.default = void 0;
-
-var _chordType = require("@tonaljs/chord-type");
-
-var _core = require("@tonaljs/core");
-
-var _pcset = require("@tonaljs/pcset");
-
-const namedSet = notes => {
-  const pcToName = notes.reduce((record, n) => {
-    const chroma = (0, _core.note)(n).chroma;
-
-    if (chroma !== undefined) {
-      record[chroma] = record[chroma] || (0, _core.note)(n).name;
-    }
-
-    return record;
-  }, {});
-  return chroma => pcToName[chroma];
-};
-
-function detect(source) {
-  const notes = source.map(n => (0, _core.note)(n).pc).filter(x => x);
-
-  if (_core.note.length === 0) {
-    return [];
-  }
-
-  const found = findExactMatches(notes, 1);
-  return found.filter(chord => chord.weight).sort((a, b) => b.weight - a.weight).map(chord => chord.name);
-}
-
-function findExactMatches(notes, weight) {
-  const tonic = notes[0];
-  const tonicChroma = (0, _core.note)(tonic).chroma;
-  const noteName = namedSet(notes); // we need to test all chormas to get the correct baseNote
-
-  const allModes = (0, _pcset.modes)(notes, false);
-  const found = [];
-  allModes.forEach((mode, index) => {
-    // some chords could have the same chroma but different interval spelling
-    const chordTypes = (0, _chordType.all)().filter(chordType => chordType.chroma === mode);
-    chordTypes.forEach(chordType => {
-      const chordName = chordType.aliases[0];
-      const baseNote = noteName(index);
-      const isInversion = index !== tonicChroma;
-
-      if (isInversion) {
-        found.push({
-          weight: 0.5 * weight,
-          name: `${baseNote}${chordName}/${tonic}`
-        });
-      } else {
-        found.push({
-          weight: 1 * weight,
-          name: `${baseNote}${chordName}`
-        });
-      }
-    });
-  });
-  return found;
-}
-
-var index = {
-  detect
-};
-var _default = index;
-exports.default = _default;
-},{"@tonaljs/chord-type":"../node_modules/@tonaljs/chord-type/dist/index.es.js","@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js"}],"../node_modules/@tonaljs/scale-type/dist/index.es.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.add = add;
-exports.addAlias = addAlias;
-exports.all = all;
-exports.get = get;
-exports.keys = keys;
-exports.names = names;
-exports.removeAll = removeAll;
-exports.scaleType = exports.entries = exports.NoScaleType = exports.default = void 0;
-
-var _core = require("@tonaljs/core");
-
-var _pcset = require("@tonaljs/pcset");
-
-// SCALES
-// Format: ["intervals", "name", "alias1", "alias2", ...]
-const SCALES = [// 5-note scales
-["1P 2M 3M 5P 6M", "major pentatonic", "pentatonic"], ["1P 3M 4P 5P 7M", "ionian pentatonic"], ["1P 3M 4P 5P 7m", "mixolydian pentatonic", "indian"], ["1P 2M 4P 5P 6M", "ritusen"], ["1P 2M 4P 5P 7m", "egyptian"], ["1P 3M 4P 5d 7m", "neopolitan major pentatonic"], ["1P 3m 4P 5P 6m", "vietnamese 1"], ["1P 2m 3m 5P 6m", "pelog"], ["1P 2m 4P 5P 6m", "kumoijoshi"], ["1P 2M 3m 5P 6m", "hirajoshi"], ["1P 2m 4P 5d 7m", "iwato"], ["1P 2m 4P 5P 7m", "in-sen"], ["1P 3M 4A 5P 7M", "lydian pentatonic", "chinese"], ["1P 3m 4P 6m 7m", "malkos raga"], ["1P 3m 4P 5d 7m", "locrian pentatonic", "minor seven flat five pentatonic"], ["1P 3m 4P 5P 7m", "minor pentatonic", "vietnamese 2"], ["1P 3m 4P 5P 6M", "minor six pentatonic"], ["1P 2M 3m 5P 6M", "flat three pentatonic", "kumoi"], ["1P 2M 3M 5P 6m", "flat six pentatonic"], ["1P 2m 3M 5P 6M", "scriabin"], ["1P 3M 5d 6m 7m", "whole tone pentatonic"], ["1P 3M 4A 5A 7M", "lydian #5P pentatonic"], ["1P 3M 4A 5P 7m", "lydian dominant pentatonic"], ["1P 3m 4P 5P 7M", "minor #7M pentatonic"], ["1P 3m 4d 5d 7m", "super locrian pentatonic"], // 6-note scales
-["1P 2M 3m 4P 5P 7M", "minor hexatonic"], ["1P 2A 3M 5P 5A 7M", "augmented"], ["1P 2M 3m 3M 5P 6M", "major blues"], ["1P 2M 4P 5P 6M 7m", "piongio"], ["1P 2m 3M 4A 6M 7m", "prometheus neopolitan"], ["1P 2M 3M 4A 6M 7m", "prometheus"], ["1P 2m 3M 5d 6m 7m", "mystery #1"], ["1P 2m 3M 4P 5A 6M", "six tone symmetric"], ["1P 2M 3M 4A 5A 7m", "whole tone", "messiaen's mode #1"], ["1P 2m 4P 4A 5P 7M", "messiaen's mode #5"], ["1P 3m 4P 5d 5P 7m", "minor blues", "blues"], // 7-note scales
-["1P 2M 3M 4P 5d 6m 7m", "locrian major", "arabian"], ["1P 2m 3M 4A 5P 6m 7M", "double harmonic lydian"], ["1P 2M 3m 4P 5P 6m 7M", "harmonic minor"], ["1P 2m 3m 4d 5d 6m 7m", "altered", "super locrian", "diminished whole tone", "pomeroy"], ["1P 2M 3m 4P 5d 6m 7m", "locrian #2", "half-diminished", "aeolian b5"], ["1P 2M 3M 4P 5P 6m 7m", "mixolydian b6", "melodic minor fifth mode", "hindu"], ["1P 2M 3M 4A 5P 6M 7m", "lydian dominant", "lydian b7", "overtone"], ["1P 2M 3M 4A 5P 6M 7M", "lydian"], ["1P 2M 3M 4A 5A 6M 7M", "lydian augmented"], ["1P 2m 3m 4P 5P 6M 7m", "dorian b2", "phrygian #6", "melodic minor second mode"], ["1P 2M 3m 4P 5P 6M 7M", "melodic minor"], ["1P 2m 3m 4P 5d 6m 7m", "locrian"], ["1P 2m 3m 4d 5d 6m 7d", "ultralocrian", "superlocrian bb7", "·superlocrian diminished"], ["1P 2m 3m 4P 5d 6M 7m", "locrian 6", "locrian natural 6", "locrian sharp 6"], ["1P 2A 3M 4P 5P 5A 7M", "augmented heptatonic"], ["1P 2M 3m 5d 5P 6M 7m", "romanian minor"], ["1P 2M 3m 4A 5P 6M 7m", "dorian #4"], ["1P 2M 3m 4A 5P 6M 7M", "lydian diminished"], ["1P 2m 3m 4P 5P 6m 7m", "phrygian"], ["1P 2M 3M 4A 5A 7m 7M", "leading whole tone"], ["1P 2M 3M 4A 5P 6m 7m", "lydian minor"], ["1P 2m 3M 4P 5P 6m 7m", "phrygian dominant", "spanish", "phrygian major"], ["1P 2m 3m 4P 5P 6m 7M", "balinese"], ["1P 2m 3m 4P 5P 6M 7M", "neopolitan major"], ["1P 2M 3m 4P 5P 6m 7m", "aeolian", "minor"], ["1P 2M 3M 4P 5P 6m 7M", "harmonic major"], ["1P 2m 3M 4P 5P 6m 7M", "double harmonic major", "gypsy"], ["1P 2M 3m 4P 5P 6M 7m", "dorian"], ["1P 2M 3m 4A 5P 6m 7M", "hungarian minor"], ["1P 2A 3M 4A 5P 6M 7m", "hungarian major"], ["1P 2m 3M 4P 5d 6M 7m", "oriental"], ["1P 2m 3m 3M 4A 5P 7m", "flamenco"], ["1P 2m 3m 4A 5P 6m 7M", "todi raga"], ["1P 2M 3M 4P 5P 6M 7m", "mixolydian", "dominant"], ["1P 2m 3M 4P 5d 6m 7M", "persian"], ["1P 2M 3M 4P 5P 6M 7M", "major", "ionian"], ["1P 2m 3M 5d 6m 7m 7M", "enigmatic"], ["1P 2M 3M 4P 5A 6M 7M", "major augmented", "major #5", "ionian augmented", "ionian #5"], ["1P 2A 3M 4A 5P 6M 7M", "lydian #9"], // 8-note scales
-["1P 2m 2M 4P 4A 5P 6m 7M", "messiaen's mode #4"], ["1P 2m 3M 4P 4A 5P 6m 7M", "purvi raga"], ["1P 2m 3m 3M 4P 5P 6m 7m", "spanish heptatonic"], ["1P 2M 3M 4P 5P 6M 7m 7M", "bebop"], ["1P 2M 3m 3M 4P 5P 6M 7m", "bebop minor"], ["1P 2M 3M 4P 5P 5A 6M 7M", "bebop major"], ["1P 2m 3m 4P 5d 5P 6m 7m", "bebop locrian"], ["1P 2M 3m 4P 5P 6m 7m 7M", "minor bebop"], ["1P 2M 3m 4P 5d 6m 6M 7M", "diminished", "whole-half diminished"], ["1P 2M 3M 4P 5d 5P 6M 7M", "ichikosucho"], ["1P 2M 3m 4P 5P 6m 6M 7M", "minor six diminished"], ["1P 2m 3m 3M 4A 5P 6M 7m", "half-whole diminished", "dominant diminished", "messiaen's mode #2"], ["1P 3m 3M 4P 5P 6M 7m 7M", "kafi raga"], ["1P 2M 3M 4P 4A 5A 6A 7M", "messiaen's mode #6"], // 9-note scales
-["1P 2M 3m 3M 4P 5d 5P 6M 7m", "composite blues"], ["1P 2M 3m 3M 4A 5P 6m 7m 7M", "messiaen's mode #3"], // 10-note scales
-["1P 2m 2M 3m 4P 4A 5P 6m 6M 7M", "messiaen's mode #7"], // 12-note scales
-["1P 2m 2M 3m 3M 4P 5d 5P 6m 6M 7m 7M", "chromatic"]];
-const NoScaleType = { ..._pcset.EmptyPcset,
-  intervals: [],
-  aliases: []
-};
-exports.NoScaleType = NoScaleType;
-let dictionary = [];
-let index = {};
-
-function names() {
-  return dictionary.map(scale => scale.name);
-}
-/**
- * Given a scale name or chroma, return the scale properties
- *
- * @param {string} type - scale name or pitch class set chroma
- * @example
- * import { get } from 'tonaljs/scale-type'
- * get('major') // => { name: 'major', ... }
- */
-
-
-function get(type) {
-  return index[type] || NoScaleType;
-}
-
-const scaleType = (0, _core.deprecate)("ScaleDictionary.scaleType", "ScaleType.get", get);
-/**
- * Return a list of all scale types
- */
-
-exports.scaleType = scaleType;
-
-function all() {
-  return dictionary.slice();
-}
-
-const entries = (0, _core.deprecate)("ScaleDictionary.entries", "ScaleType.all", all);
-/**
- * Keys used to reference scale types
- */
-
-exports.entries = entries;
-
-function keys() {
-  return Object.keys(index);
-}
-/**
- * Clear the dictionary
- */
-
-
-function removeAll() {
-  dictionary = [];
-  index = {};
-}
-/**
- * Add a scale into dictionary
- * @param intervals
- * @param name
- * @param aliases
- */
-
-
-function add(intervals, name, aliases = []) {
-  const scale = { ...(0, _pcset.get)(intervals),
-    name,
-    intervals,
-    aliases
-  };
-  dictionary.push(scale);
-  index[scale.name] = scale;
-  index[scale.setNum] = scale;
-  index[scale.chroma] = scale;
-  scale.aliases.forEach(alias => addAlias(scale, alias));
-  return scale;
-}
-
-function addAlias(scale, alias) {
-  index[alias] = scale;
-}
-
-SCALES.forEach(([ivls, name, ...aliases]) => add(ivls.split(" "), name, aliases));
-var index$1 = {
-  names,
-  get,
-  all,
-  add,
-  removeAll,
-  keys,
-  // deprecated
-  entries,
-  scaleType
-};
-var _default = index$1;
-exports.default = _default;
-},{"@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js"}],"../node_modules/@tonaljs/chord/dist/index.es.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.chordScales = chordScales;
-exports.extended = extended;
-exports.get = get;
-exports.getChord = getChord;
-exports.reduced = reduced;
-exports.tokenize = tokenize;
-exports.transpose = transpose;
-Object.defineProperty(exports, "detect", {
+var _exportNames = {};
+Object.defineProperty(exports, "default", {
   enumerable: true,
   get: function () {
-    return _chordDetect.detect;
+    return _chordType.default;
   }
 });
-exports.chord = exports.default = void 0;
 
-var _chordDetect = require("@tonaljs/chord-detect");
+var _chordType = _interopRequireWildcard(require("@tonaljs/chord-type"));
 
-var _chordType = require("@tonaljs/chord-type");
+Object.keys(_chordType).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _chordType[key];
+    }
+  });
+});
 
-var _core = require("@tonaljs/core");
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
-var _pcset = require("@tonaljs/pcset");
-
-var _scaleType = require("@tonaljs/scale-type");
-
-const NoChord = {
-  empty: true,
-  name: "",
-  symbol: "",
-  root: "",
-  rootDegree: 0,
-  type: "",
-  tonic: null,
-  setNum: NaN,
-  quality: "Unknown",
-  chroma: "",
-  normalized: "",
-  aliases: [],
-  notes: [],
-  intervals: []
-}; // 6, 64, 7, 9, 11 and 13 are consider part of the chord
-// (see https://github.com/danigb/tonal/issues/55)
-
-const NUM_TYPES = /^(6|64|7|9|11|13)$/;
-/**
- * Tokenize a chord name. It returns an array with the tonic and chord type
- * If not tonic is found, all the name is considered the chord name.
- *
- * This function does NOT check if the chord type exists or not. It only tries
- * to split the tonic and chord type.
- *
- * @function
- * @param {string} name - the chord name
- * @return {Array} an array with [tonic, type]
- * @example
- * tokenize("Cmaj7") // => [ "C", "maj7" ]
- * tokenize("C7") // => [ "C", "7" ]
- * tokenize("mMaj7") // => [ null, "mMaj7" ]
- * tokenize("Cnonsense") // => [ null, "nonsense" ]
- */
-
-function tokenize(name) {
-  const [letter, acc, oct, type] = (0, _core.tokenizeNote)(name);
-
-  if (letter === "") {
-    return ["", name];
-  } // aug is augmented (see https://github.com/danigb/tonal/issues/55)
-
-
-  if (letter === "A" && type === "ug") {
-    return ["", "aug"];
-  } // see: https://github.com/tonaljs/tonal/issues/70
-
-
-  if (!type && (oct === "4" || oct === "5")) {
-    return [letter + acc, oct];
-  }
-
-  if (NUM_TYPES.test(oct)) {
-    return [letter + acc, oct + type];
-  } else {
-    return [letter + acc + oct, type];
-  }
-}
-/**
- * Get a Chord from a chord name.
- */
-
-
-function get(src) {
-  if (src === "") {
-    return NoChord;
-  }
-
-  if (Array.isArray(src) && src.length === 2) {
-    return getChord(src[1], src[0]);
-  } else {
-    const [tonic, type] = tokenize(src);
-    const chord = getChord(type, tonic);
-    return chord.empty ? getChord(src) : chord;
-  }
-}
-/**
- * Get chord properties
- *
- * @param typeName - the chord type name
- * @param [tonic] - Optional tonic
- * @param [root]  - Optional root (requires a tonic)
- */
-
-
-function getChord(typeName, optionalTonic, optionalRoot) {
-  const type = (0, _chordType.get)(typeName);
-  const tonic = (0, _core.note)(optionalTonic || "");
-  const root = (0, _core.note)(optionalRoot || "");
-
-  if (type.empty || optionalTonic && tonic.empty || optionalRoot && root.empty) {
-    return NoChord;
-  }
-
-  const rootInterval = (0, _core.distance)(tonic.pc, root.pc);
-  const rootDegree = type.intervals.indexOf(rootInterval) + 1;
-
-  if (!root.empty && !rootDegree) {
-    return NoChord;
-  }
-
-  const intervals = Array.from(type.intervals);
-
-  for (let i = 1; i < rootDegree; i++) {
-    const num = intervals[0][0];
-    const quality = intervals[0][1];
-    const newNum = parseInt(num, 10) + 7;
-    intervals.push(`${newNum}${quality}`);
-    intervals.shift();
-  }
-
-  const notes = tonic.empty ? [] : intervals.map(i => (0, _core.transpose)(tonic, i));
-  typeName = type.aliases.indexOf(typeName) !== -1 ? typeName : type.aliases[0];
-  const symbol = `${tonic.empty ? "" : tonic.pc}${typeName}${root.empty || rootDegree <= 1 ? "" : "/" + root.pc}`;
-  const name = `${optionalTonic ? tonic.pc + " " : ""}${type.name}${rootDegree > 1 && optionalRoot ? " over " + root.pc : ""}`;
-  return { ...type,
-    name,
-    symbol,
-    type: type.name,
-    root: root.name,
-    intervals,
-    rootDegree,
-    tonic: tonic.name,
-    notes
-  };
-}
-
-const chord = (0, _core.deprecate)("Chord.chord", "Chord.get", get);
-/**
- * Transpose a chord name
- *
- * @param {string} chordName - the chord name
- * @return {string} the transposed chord
- *
- * @example
- * transpose('Dm7', 'P4') // => 'Gm7
- */
-
-exports.chord = chord;
-
-function transpose(chordName, interval) {
-  const [tonic, type] = tokenize(chordName);
-
-  if (!tonic) {
-    return chordName;
-  }
-
-  return (0, _core.transpose)(tonic, interval) + type;
-}
-/**
- * Get all scales where the given chord fits
- *
- * @example
- * chordScales('C7b9')
- * // => ["phrygian dominant", "flamenco", "spanish heptatonic", "half-whole diminished", "chromatic"]
- */
-
-
-function chordScales(name) {
-  const s = get(name);
-  const isChordIncluded = (0, _pcset.isSupersetOf)(s.chroma);
-  return (0, _scaleType.all)().filter(scale => isChordIncluded(scale.chroma)).map(scale => scale.name);
-}
-/**
- * Get all chords names that are a superset of the given one
- * (has the same notes and at least one more)
- *
- * @function
- * @example
- * extended("CMaj7")
- * // => [ 'Cmaj#4', 'Cmaj7#9#11', 'Cmaj9', 'CM7add13', 'Cmaj13', 'Cmaj9#11', 'CM13#11', 'CM7b9' ]
- */
-
-
-function extended(chordName) {
-  const s = get(chordName);
-  const isSuperset = (0, _pcset.isSupersetOf)(s.chroma);
-  return (0, _chordType.all)().filter(chord => isSuperset(chord.chroma)).map(chord => s.tonic + chord.aliases[0]);
-}
-/**
- * Find all chords names that are a subset of the given one
- * (has less notes but all from the given chord)
- *
- * @example
- */
-
-
-function reduced(chordName) {
-  const s = get(chordName);
-  const isSubset = (0, _pcset.isSubsetOf)(s.chroma);
-  return (0, _chordType.all)().filter(chord => isSubset(chord.chroma)).map(chord => s.tonic + chord.aliases[0]);
-}
-
-var index = {
-  getChord,
-  get,
-  detect: _chordDetect.detect,
-  chordScales,
-  extended,
-  reduced,
-  tokenize,
-  transpose,
-  // deprecate
-  chord
-};
-var _default = index;
-exports.default = _default;
-},{"@tonaljs/chord-detect":"../node_modules/@tonaljs/chord-detect/dist/index.es.js","@tonaljs/chord-type":"../node_modules/@tonaljs/chord-type/dist/index.es.js","@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js","@tonaljs/scale-type":"../node_modules/@tonaljs/scale-type/dist/index.es.js"}],"index.js":[function(require,module,exports) {
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+},{"@tonaljs/chord-type":"../node_modules/@tonaljs/chord-type/dist/index.es.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
-var _chord = require("@tonaljs/chord");
-},{"@tonaljs/chord":"../node_modules/@tonaljs/chord/dist/index.es.js"}],"../../.nvm/versions/node/v14.8.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var _chordDictionary = require("@tonaljs/chord-dictionary");
+
+// import { note, interval, transpose } from '@tonaljs/tonal';
+// import {chord} from '@tonaljs/chord';
+var startNotes = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
+var startNotesSelector = document.querySelector('#start-note');
+var octaveSelector = document.querySelector('#octave');
+var app = {
+  init: function init() {
+    this.setupStartNotes();
+    this.setupOctaves();
+  },
+  setupStartNotes: function setupStartNotes() {
+    var _this = this;
+
+    startNotes.forEach(function (noteName) {
+      var noteNameOption = _this.createElement('option', noteName);
+
+      startNotesSelector.appendChild(noteNameOption);
+    });
+  },
+  setupOctaves: function setupOctaves() {
+    for (var i = 1; i <= 7; i++) {
+      var octaveNumber = this.createElement('option', i);
+      octaveSelector.appendChild(octaveNumber);
+    }
+  },
+  createElement: function createElement(elementName, content) {
+    var element = document.createElement(elementName);
+    element.innerHTML = content;
+    return element;
+  }
+};
+app.init();
+},{"@tonaljs/chord-dictionary":"../node_modules/@tonaljs/chord-dictionary/dist/index.es.js"}],"../../.nvm/versions/node/v14.8.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
