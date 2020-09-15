@@ -1,0 +1,19 @@
+{
+  "name": "chord-player",
+  "version": "1.0.0",
+  "description": "Chords Player is a simple, yet useful, music tool. It lets you search for chords and play them like(5m), chords are defined by their root note and their quality (major, minor, 7, etc).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avesrastogi/Chord-Player.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avesrastogi/Chord-Player/issues"
+  },
+  "homepage": "https://github.com/avesrastogi/Chord-Player#readme"
+}
