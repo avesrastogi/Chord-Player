@@ -1596,9 +1596,6 @@ exports.default = _default;
 "use strict";
 
 var _chord = require("@tonaljs/chord");
-
-// import { note, interval, transpose } from '@tonaljs/tonal';
-console.log((0, _chord.chord)('Amaj7'));
 },{"@tonaljs/chord":"../node_modules/@tonaljs/chord/dist/index.es.js"}],"../../.nvm/versions/node/v14.8.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
