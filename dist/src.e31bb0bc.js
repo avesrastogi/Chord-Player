@@ -1154,50 +1154,21 @@ var index$1 = {
 };
 var _default = index$1;
 exports.default = _default;
-},{"@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js"}],"../node_modules/@tonaljs/chord-dictionary/dist/index.es.js":[function(require,module,exports) {
+},{"@tonaljs/core":"../node_modules/@tonaljs/core/dist/index.es.js","@tonaljs/pcset":"../node_modules/@tonaljs/pcset/dist/index.es.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var _exportNames = {};
-Object.defineProperty(exports, "default", {
-  enumerable: true,
-  get: function () {
-    return _chordType.default;
-  }
-});
+var _chordType = require("@tonaljs/chord-type");
 
-var _chordType = _interopRequireWildcard(require("@tonaljs/chord-type"));
-
-Object.keys(_chordType).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _chordType[key];
-    }
-  });
-});
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-},{"@tonaljs/chord-type":"../node_modules/@tonaljs/chord-type/dist/index.es.js"}],"index.js":[function(require,module,exports) {
-"use strict";
-
-var _chordDictionary = require("@tonaljs/chord-dictionary");
-
-// import { note, interval, transpose } from '@tonaljs/tonal';
-// import {chord} from '@tonaljs/chord';
 var startNotes = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
 var startNotesSelector = document.querySelector('#start-note');
 var octaveSelector = document.querySelector('#octave');
+var buttons = document.querySelector('.buttons');
+var selectedStartNote;
 var app = {
   init: function init() {
     this.setupStartNotes();
     this.setupOctaves();
+    this.setupButtons();
   },
   setupStartNotes: function setupStartNotes() {
     var _this = this;
@@ -1214,6 +1185,23 @@ var app = {
       octaveSelector.appendChild(octaveNumber);
     }
   },
+  setupButtons: function setupButtons() {
+    var _this2 = this;
+
+    var chordNames = (0, _chordType.entries)().map(function (entry) {
+      return entry.aliases[0];
+    });
+    chordNames.forEach(function (chordName) {
+      var chordButton = _this2.createElement('button', chordName);
+
+      buttons.appendChild(chordButton);
+    });
+  },
+  setupEventListeners: function setupEventListeners() {
+    startNotesSelector.addEventListener('change', function () {
+      selectedStartNote = startNotesSelector.nodeValue;
+    });
+  },
   createElement: function createElement(elementName, content) {
     var element = document.createElement(elementName);
     element.innerHTML = content;
@@ -1221,7 +1209,7 @@ var app = {
   }
 };
 app.init();
-},{"@tonaljs/chord-dictionary":"../node_modules/@tonaljs/chord-dictionary/dist/index.es.js"}],"../../.nvm/versions/node/v14.8.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@tonaljs/chord-type":"../node_modules/@tonaljs/chord-type/dist/index.es.js"}],"../../.nvm/versions/node/v14.8.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
