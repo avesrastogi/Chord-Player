@@ -57,11 +57,11 @@ const app = {
     setupEventListeners() {
         startNotesSelector.addEventListener('change', () => {
             selectedStartNote = startNotesSelector.value;
-            console.log(selectedStartNote);
+            // console.log(selectedStartNote);
         });
         octaveSelector.addEventListener('change', () => {
             selectedOctave = octaveSelector.value;
-            console.log(selectedOctave);
+            // console.log(selectedOctave);
         });
         buttons.addEventListener('click', (event) => {
             //to prevent console of <div class='buttons'>
@@ -99,7 +99,7 @@ const soundEngine = {
             sound['_sprite'][i] = [timeIndex, lengthOfNote];
             timeIndex += lengthOfNote; 
         }
-        sound.play('44');
+        // sound.play('44');
     },
     play(soundSequence) {
 
@@ -109,7 +109,7 @@ const soundEngine = {
 
         sound.volume(0.75);
         soundSequenceMidiNumbers.forEach(noteMidiNumber => {
-            console.log(noteMidiNumber);
+            // console.log(noteMidiNumber);
             sound.play(noteMidiNumber.toString());
         });
     }

@@ -6951,9 +6951,8 @@ var soundEngine = {
     for (var i = 24; i <= 96; i++) {
       sound['_sprite'][i] = [timeIndex, lengthOfNote];
       timeIndex += lengthOfNote;
-    }
+    } // sound.play('44');
 
-    sound.play('44');
   },
   play: function play(soundSequence) {
     var soundSequenceMidiNumbers = soundSequence.map(function (noteName) {
