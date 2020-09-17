@@ -20,6 +20,7 @@
     "@tonaljs/chord": "^3.8.1",
     "@tonaljs/chord-dictionary": "^3.5.1",
     "@tonaljs/chord-type": "^3.6.1",
-    "@tonaljs/tonal": "^4.2.1"
+    "@tonaljs/tonal": "^4.2.1",
+    "howler": "^2.2.0"
   }
 }
