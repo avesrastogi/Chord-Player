@@ -1,4 +1,4 @@
-import { transpose } from '@tonaljs/tonal';
+import { transpose , note } from '@tonaljs/tonal';
 import { chord } from "@tonaljs/chord";
 import { ChordType } from "@tonaljs/tonal";
 import { howler, how } from "howler";
@@ -40,7 +40,7 @@ const app = {
         });       
     },
     setupOctaves() {
-        for (let i = 1; i<=7; i++) {
+        for (let i = 1; i<=4; i++) {
             let octaveNumber = this.createElement('option', i);
             octaveSelector.appendChild(octaveNumber);
         }
@@ -102,7 +102,16 @@ const soundEngine = {
         sound.play('44');
     },
     play(soundSequence) {
-        console.log(soundSequence);
+
+        const soundSequenceMidiNumbers = soundSequence.map(noteName => {
+            return note(noteName).midi;
+        }); 
+
+        sound.volume(0.75);
+        soundSequenceMidiNumbers.forEach(noteMidiNumber => {
+            console.log(noteMidiNumber);
+            sound.play(noteMidiNumber.toString());
+        });
     }
 }
 

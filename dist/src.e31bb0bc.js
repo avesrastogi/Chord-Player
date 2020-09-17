@@ -6886,7 +6886,7 @@ var app = {
     });
   },
   setupOctaves: function setupOctaves() {
-    for (var i = 1; i <= 7; i++) {
+    for (var i = 1; i <= 4; i++) {
       var octaveNumber = this.createElement('option', i);
       octaveSelector.appendChild(octaveNumber);
     }
@@ -6956,7 +6956,14 @@ var soundEngine = {
     sound.play('44');
   },
   play: function play(soundSequence) {
-    console.log(soundSequence);
+    var soundSequenceMidiNumbers = soundSequence.map(function (noteName) {
+      return (0, _tonal.note)(noteName).midi;
+    });
+    sound.volume(0.75);
+    soundSequenceMidiNumbers.forEach(function (noteMidiNumber) {
+      console.log(noteMidiNumber);
+      sound.play(noteMidiNumber.toString());
+    });
   }
 };
 app.init();
