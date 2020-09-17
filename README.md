@@ -4,10 +4,10 @@ A chord player that can play all the chords in the universe (maybe) for your bro
 
 # HOW_TO_PLAY?
 You need to install the following using npm or yarn or directly dowwnload them from the provided links:
-  # Tonal.js on Github: https://github.com/tonaljs/tonal/
-  # Visual Studio Code: https://code.visualstudio.com/
-  # Node.js: https://nodejs.org/
-  # Parcel Bundler: https://parceljs.org/
+  Tonal.js on Github: https://github.com/tonaljs/tonal/
+  Visual Studio Code: https://code.visualstudio.com/
+  Node.js: https://nodejs.org/
+  Parcel Bundler: https://parceljs.org/
   
 Screenshots to get a view of the player: 
 ![Screenshot from 2020-09-18 00-31-01](https://user-images.githubusercontent.com/55761079/93515798-cbc60280-f946-11ea-9ed3-ad06e2651839.png)
