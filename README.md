@@ -2,6 +2,8 @@
 Chords Player is a simple, yet useful, music tool. It lets you search for chords and play them like(5m), chords are defined by their root note and their quality (major, minor, 7, etc).
 A chord player that can play all the chords in the universe (maybe) for your browser.
 
+# Check it out at: (https://chord-player.netlify.app)
+
 # HOW TO PLAY?
 You need to install the following using npm or yarn or directly download them from the provided links:
   - Tonal.js on Github: https://github.com/tonaljs/tonal/
