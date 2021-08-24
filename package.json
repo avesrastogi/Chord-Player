@@ -27,5 +27,8 @@
     "@tonaljs/chord-type": "^3.6.1",
     "@tonaljs/tonal": "^4.2.1",
     "howler": "^2.2.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
   }
 }
