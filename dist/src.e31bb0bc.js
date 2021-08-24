@@ -6908,12 +6908,10 @@ var app = {
     var _this3 = this;
 
     startNotesSelector.addEventListener('change', function () {
-      selectedStartNote = startNotesSelector.value;
-      console.log(selectedStartNote);
+      selectedStartNote = startNotesSelector.value; // console.log(selectedStartNote);
     });
     octaveSelector.addEventListener('change', function () {
-      selectedOctave = octaveSelector.value;
-      console.log(selectedOctave);
+      selectedOctave = octaveSelector.value; // console.log(selectedOctave);
     });
     buttons.addEventListener('click', function (event) {
       //to prevent console of <div class='buttons'>
@@ -6960,7 +6958,7 @@ var soundEngine = {
     });
     sound.volume(0.75);
     soundSequenceMidiNumbers.forEach(function (noteMidiNumber) {
-      console.log(noteMidiNumber);
+      // console.log(noteMidiNumber);
       sound.play(noteMidiNumber.toString());
     });
   }
@@ -6994,7 +6992,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38183" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37547" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
