@@ -8,9 +8,9 @@ You need to install the following using npm or yarn or directly download them fr
   - Visual Studio Code: https://code.visualstudio.com/
   - Node.js: https://nodejs.org/
   - Parcel Bundler: https://parceljs.org/
-Then run the following command in your project terminal: 
-(parcel src/index.html)
- 
+
+Then run the following command in your project terminal: parcel src/index.html
+
 # Screenshots to get a view of the player: 
 ![Screenshot from 2020-09-18 00-31-01](https://user-images.githubusercontent.com/55761079/93515798-cbc60280-f946-11ea-9ed3-ad06e2651839.png)
 ![Screenshot from 2020-09-18 00-31-04](https://user-images.githubusercontent.com/55761079/93515803-cd8fc600-f946-11ea-8983-d6e23a4f76d3.png)
